@@ -8,8 +8,9 @@ package body Reed_Solomon is
 
    -- Initialize Exp and Log tables at elaboration time
    function Init_Tables return Tables_Record is
-      T : Tables_Record := (others => (others => 0));
-      V : Natural := 1;
+      T : Tables_Record := (Exp => [others => 0], Log => [others => 0]);
+      type Calc_Type is mod 512;
+      V : Calc_Type := 1;
    begin
       for I in 0 .. 254 loop
          T.Exp (Symbol (I)) := Symbol (V);
@@ -45,7 +46,7 @@ package body Reed_Solomon is
 
    function Poly_Add (Left, Right : Polynomial) return Polynomial is
       Max_Len : constant Natural := Natural'Max (Left'Length, Right'Length);
-      Result  : Polynomial (0 .. Max_Len - 1) := (others => 0);
+      Result  : Polynomial (0 .. Max_Len - 1) := [others => 0];
    begin
       for I in Left'Range loop
          Result (I - Left'First) := Left (I);
@@ -57,7 +58,7 @@ package body Reed_Solomon is
    end Poly_Add;
 
    function Poly_Mult (Left, Right : Polynomial) return Polynomial is
-      Result : Polynomial (0 .. Left'Length + Right'Length - 2) := (others => 0);
+      Result : Polynomial (0 .. Left'Length + Right'Length - 2) := [others => 0];
    begin
       for I in Left'Range loop
          for J in Right'Range loop
@@ -88,12 +89,12 @@ package body Reed_Solomon is
    end Encode_Original_View;
 
    function Generate_Polynomial (ECC_Count : Natural) return Polynomial is
-      G : Polynomial (0 .. 0) := (0 => 1);
+      G : Polynomial (0 .. 0) := [0 => 1];
    begin
       for I in 0 .. ECC_Count - 1 loop
          declare
             Root : constant Symbol := Tables.Exp (Symbol (I mod 255));
-            Term : constant Polynomial (0 .. 1) := (0 => Root, 1 => 1);
+            Term : constant Polynomial (0 .. 1) := [0 => Root, 1 => 1];
          begin
             G := Poly_Mult (G, Term);
          end;
@@ -103,7 +104,7 @@ package body Reed_Solomon is
 
    function Encode_BCH (Message : Polynomial; ECC_Count : Natural) return Polynomial is
       G : constant Polynomial := Generate_Polynomial (ECC_Count);
-      Shifted : Polynomial (0 .. Message'Length + ECC_Count - 1) := (others => 0);
+      Shifted : Polynomial (0 .. Message'Length + ECC_Count - 1) := [others => 0];
    begin
       -- Place message into higher powers
       for I in Message'Range loop
@@ -168,8 +169,8 @@ package body Reed_Solomon is
 
       -- Berlekamp-Massey Algorithm to find Error Locator Polynomial (Lambda)
       declare
-         C     : Polynomial (0 .. ECC_Count) := (0 => 1, others => 0);
-         B     : Polynomial (0 .. ECC_Count) := (0 => 1, others => 0);
+         C     : Polynomial (0 .. ECC_Count) := [0 => 1, others => 0];
+         B     : Polynomial (0 .. ECC_Count) := [0 => 1, others => 0];
          L     : Natural := 0;
          M     : Natural := 1;
          B_Val : Symbol := 1;
@@ -238,7 +239,7 @@ package body Reed_Solomon is
             declare
                Omega_Full : constant Polynomial := Poly_Mult (Syndromes, Lambda);
                Omega      : Polynomial (0 .. ECC_Count - 1);
-               Lambda_Deriv : Polynomial (0 .. L - 1) := (others => 0);
+               Lambda_Deriv : Polynomial (0 .. L - 1) := [others => 0];
                Corrected  : Polynomial := Codeword;
             begin
                -- Omega is calculated modulo x^ECC_Count
