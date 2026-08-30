@@ -12,7 +12,7 @@ package Reed_Solomon is
 
    -- Galois Field Arithmetic in GF(2^8)
    function "+" (Left, Right : Symbol) return Symbol
-     with Post => "+"’Result = (Left xor Right);
+     with Post => "+"'Result = (Left xor Right);
 
    function "*" (Left, Right : Symbol) return Symbol;
    
