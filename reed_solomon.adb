@@ -89,17 +89,21 @@ package body Reed_Solomon is
    end Encode_Original_View;
 
    function Generate_Polynomial (ECC_Count : Natural) return Polynomial is
-      G : Polynomial (0 .. 0) := [0 => 1];
+      function Gen_Rec (Idx : Natural; Acc : Polynomial) return Polynomial is
+      begin
+         if Idx >= ECC_Count then
+            return Acc;
+         else
+            declare
+               Root : constant Symbol := Tables.Exp (Symbol (Idx mod 255));
+               Term : constant Polynomial := [0 => Root, 1 => 1];
+            begin
+               return Gen_Rec (Idx + 1, Poly_Mult (Acc, Term));
+            end;
+         end if;
+      end Gen_Rec;
    begin
-      for I in 0 .. ECC_Count - 1 loop
-         declare
-            Root : constant Symbol := Tables.Exp (Symbol (I mod 255));
-            Term : constant Polynomial (0 .. 1) := [0 => Root, 1 => 1];
-         begin
-            G := Poly_Mult (G, Term);
-         end;
-      end loop;
-      return G;
+      return Gen_Rec (0, [0 => 1]);
    end Generate_Polynomial;
 
    function Encode_BCH (Message : Polynomial; ECC_Count : Natural) return Polynomial is
