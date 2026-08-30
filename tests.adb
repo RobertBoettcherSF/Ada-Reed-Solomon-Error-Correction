@@ -16,7 +16,7 @@ procedure Tests is
       end if;
    end Check;
 
-   Msg_Data : constant Polynomial := (10, 20, 30);
+   Msg_Data : constant Polynomial := [10, 20, 30];
    ECC_Len  : constant Natural := 4;
 
 begin
@@ -41,8 +41,8 @@ begin
    -- TEST 4 — Polynomial Addition
    Put_Line ("TEST 4 — Polynomial Addition");
    declare
-      P1 : constant Polynomial := (1, 2, 3);
-      P2 : constant Polynomial := (1, 5, 0, 4);
+      P1 : constant Polynomial := [1, 2, 3];
+      P2 : constant Polynomial := [1, 5, 0, 4];
       P3 : constant Polynomial := Poly_Add (P1, P2);
    begin
       Check ("4.1 Length matched max", P3'Length = 4);
@@ -53,8 +53,8 @@ begin
    -- TEST 5 — Polynomial Multiplication
    Put_Line ("TEST 5 — Polynomial Multiplication");
    declare
-      P1 : constant Polynomial := (1, 2);
-      P2 : constant Polynomial := (3, 4);
+      P1 : constant Polynomial := [1, 2];
+      P2 : constant Polynomial := [3, 4];
       P3 : constant Polynomial := Poly_Mult (P1, P2);
    begin
       Check ("5.1 Deg 1 * Deg 1 is Deg 2", P3'Length = 3);
@@ -65,17 +65,17 @@ begin
    -- TEST 6 — Polynomial Evaluation
    Put_Line ("TEST 6 — Polynomial Evaluation");
    declare
-      P : constant Polynomial := (10, 20, 30);
+      P : constant Polynomial := [10, 20, 30];
    begin
       Check ("6.1 Eval at 0 is const term", Poly_Eval(P, 0) = 10);
       Check ("6.2 Eval at 1 is sum", Poly_Eval(P, 1) = (10 + 20 + 30));
-      Check ("6.3 Eval identity relation", Poly_Eval((0=>5), 99) = 5);
+      Check ("6.3 Eval identity relation", Poly_Eval([0=>5], 99) = 5);
    end;
 
    -- TEST 7 — Original View Encoding
    Put_Line ("TEST 7 — Original View Encoding");
    declare
-      O_Msg : constant Polynomial := (1, 2, 3);
+      O_Msg : constant Polynomial := [1, 2, 3];
       O_CW  : constant Polynomial := Encode_Original_View (O_Msg, 5);
    begin
       Check ("7.1 Codeword length is N", O_CW'Length = 5);
