@@ -162,6 +162,7 @@ begin
       begin
          declare
             Dec : constant Polynomial := Decode_BCH (CW_Err, ECC_Len);
+            pragma Unreferenced (Dec);
          begin
             Check ("13.1 Exception expected", False);
          end;
