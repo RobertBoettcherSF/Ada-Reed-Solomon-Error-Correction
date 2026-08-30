@@ -1,5 +1,4 @@
 package Reed_Solomon is
-   pragma Preelaborate;
 
    -- We use GF(2^8) elements, standard for Reed-Solomon bytes
    type Symbol is mod 256;
